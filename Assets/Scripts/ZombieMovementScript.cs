@@ -20,6 +20,7 @@ public class ZombieMovementScript : MonoBehaviour
     private NavMeshAgent z_navMeshAgent;
     private state z_state;
     private float z_playerZombieDistance;
+    private Color z_gizmosColor;
     private Collider[] z_colliderList;
     private float z_overcastSphereRadius;
 
@@ -30,13 +31,11 @@ public class ZombieMovementScript : MonoBehaviour
     [SerializeField]
     private int z_radius;
     [SerializeField]
-    private bool z_followPlayer;
-    [SerializeField]
-    private GameObject player;
+    private bool z_followPlayer;    //[SerializeField]
+   
 
     public float z_rotateSpeed;
     public float z_moveSpeed;
-    //public Transform player;
     #endregion
 
     private void Awake()
@@ -49,21 +48,22 @@ public class ZombieMovementScript : MonoBehaviour
       {
         z_navMeshAgent = GetComponent<NavMeshAgent>();
       }
+       // player = GameManagerScript.instance.player;
     }
 
     void Start()
     {
-        traverse();
+        z_state = state.PATROL;
+        Debug.Log("name 2" + GameManagerScript.instance.player.name);
     }
 
     void Update()
     {
-        /*z_playerZombieDistance = Vector3.Distance(transform.position, player.transform.position);
-        if(z_playerZombieDistance < z_radius)
+        z_playerZombieDistance = Vector3.Distance(transform.position, GameManagerScript.instance.player.transform.position);
+        if (z_playerZombieDistance < z_radius)
         {
-            z_navMeshAgent.SetDestination(player.transform.position);
-            Walk(z_isWalking);
-        }*/
+            z_state = state.PURSUE;
+        }
         #region Vector3Waypoints
         /*if(Vector3.Distance(z_waypoints[z_points].transform.position, this.transform.position) <= 1)
         if(Vector3.Distance(z_waypoints[z_points].transform.position, this.transform.position) <= 1 && z_followPlayer == false)
@@ -95,6 +95,7 @@ public class ZombieMovementScript : MonoBehaviour
         this.transform.position = Vector3.MoveTowards(this.transform.position, z_moveDirection, z_moveSpeed * Time.deltaTime);
         Walk(z_isWalking);*/
         #endregion
+
         #region NavMeshMovement
         switch (z_state)
         {
@@ -105,12 +106,14 @@ public class ZombieMovementScript : MonoBehaviour
                 }
                 break;
 
+            case state.PURSUE:
+                pursue();
+                break;
+
+            case state.ATTACK:
+                break;
+
         }
-        /*if(Vector3.Distance(this.transform.position, playerPosition) <= z_radius)
-        {
-            z_moveDirection = playerPosition;
-            z_navMeshAgent.SetDestination(z_moveDirection);
-        }*/
         #endregion
     }
 
@@ -123,10 +126,34 @@ public class ZombieMovementScript : MonoBehaviour
 
     void traverse()
     {
-        z_points = Random.Range(0, z_waypoints.Length);
-        z_moveDirection = z_waypoints[z_points].transform.position;
-        z_navMeshAgent.SetDestination(z_moveDirection);
-        Walk(z_isWalking);
+        z_gizmosColor = Color.black;
+        if (z_playerZombieDistance > z_radius)
+        {
+            z_points = Random.Range(0, z_waypoints.Length);
+            z_moveDirection = z_waypoints[z_points].transform.position;
+            z_navMeshAgent.SetDestination(z_moveDirection);
+            Walk(z_isWalking);
+            z_state = state.PATROL;
+        }
+        if (z_playerZombieDistance < z_radius)
+        {
+            z_state = state.PURSUE;
+        }
     }
 
+    void pursue()
+    {
+        z_gizmosColor = Color.red;
+        z_navMeshAgent.SetDestination(GameManagerScript.instance.player.transform.position);
+        Walk(z_isWalking);
+        if (z_playerZombieDistance > z_radius)
+        {
+            z_state = state.PATROL;
+        }
+    }
+    private void OnDrawGizmos()
+    {
+        Gizmos.color= z_gizmosColor;
+        Gizmos.DrawWireSphere(this.transform.position, z_radius);
+    }
 }

@@ -9,7 +9,6 @@ public class PlayerMovementScript : MonoBehaviour
     public Animator animator;
     NavMeshAgent navMeshAgent;
     bool run;
-    public Vector3 p_position;
     
     [SerializeField]
     private float p_moveSpeed;
@@ -30,7 +29,6 @@ public class PlayerMovementScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        p_position = this.transform.position;
         RaycastHit hit;
         if (Input.GetMouseButton(0))
         {

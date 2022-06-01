@@ -19,7 +19,9 @@ public class ZombieMovementScript : MonoBehaviour
     private bool z_isWalking = true;
     private NavMeshAgent z_navMeshAgent;
     private state z_state;
+    private float z_playerZombieDistance;
     private Collider[] z_colliderList;
+    private float z_overcastSphereRadius;
 
     [SerializeField]
     private GameObject[] z_waypoints;
@@ -27,9 +29,10 @@ public class ZombieMovementScript : MonoBehaviour
     private Animator z_animator;
     [SerializeField]
     private int z_radius;
-    private float z_overcastSphereRadius;
     [SerializeField]
     private bool z_followPlayer;
+    [SerializeField]
+    private GameObject player;
 
     public float z_rotateSpeed;
     public float z_moveSpeed;
@@ -55,6 +58,12 @@ public class ZombieMovementScript : MonoBehaviour
 
     void Update()
     {
+        /*z_playerZombieDistance = Vector3.Distance(transform.position, player.transform.position);
+        if(z_playerZombieDistance < z_radius)
+        {
+            z_navMeshAgent.SetDestination(player.transform.position);
+            Walk(z_isWalking);
+        }*/
         #region Vector3Waypoints
         /*if(Vector3.Distance(z_waypoints[z_points].transform.position, this.transform.position) <= 1)
         if(Vector3.Distance(z_waypoints[z_points].transform.position, this.transform.position) <= 1 && z_followPlayer == false)

@@ -38,7 +38,7 @@ public class PlayerMovementScript : MonoBehaviour
                 navMeshAgent.SetDestination(hit.point);
             }
         }
-        if (navMeshAgent.remainingDistance > navMeshAgent.stoppingDistance)
+        if (navMeshAgent.remainingDistance > 1)
         {
             run = true;
         }

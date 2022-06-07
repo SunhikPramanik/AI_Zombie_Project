@@ -33,9 +33,14 @@ public class PlayerMovementScript : MonoBehaviour
         if (Input.GetMouseButton(0))
         {
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+            if (Physics.Raycast(ray, out hit, 100.0f))
             {
                 navMeshAgent.SetDestination(hit.point);
+                if(hit.collider.CompareTag("Enemy") && Vector3.Distance(this.transform.position, hit.collider.transform.position)<1)
+                {
+                    Quaternion.LookRotation(hit.collider.transform.position);
+                    animator.SetTrigger("Attack");
+                }
             }
         }
         if (navMeshAgent.remainingDistance > 1)

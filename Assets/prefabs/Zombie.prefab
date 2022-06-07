@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 166273298174482717}
   - component: {fileID: 166273298174482714}
   - component: {fileID: 1456974255726823049}
-  - component: {fileID: -8036939570055871954}
+  - component: {fileID: -4828560823962032300}
   m_Layer: 0
   m_Name: Zombie
   m_TagString: Enemy
@@ -117,7 +117,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1.97, z: 0.63}
   m_Center: {x: 0, y: 0.81, z: 0.07}
---- !u!54 &-8036939570055871954
+--- !u!54 &-4828560823962032300
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

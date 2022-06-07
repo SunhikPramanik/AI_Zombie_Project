@@ -23,6 +23,7 @@ public class ZombieMovementScript : MonoBehaviour
     private float z_playerZombieDistance;
     private Color z_gizmosColor;
     private Collider z_onCollisionWithPlayer;
+    private float z_AttackRange = 1.0f;
 
     [SerializeField]
     private GameObject[] z_waypoints;
@@ -59,7 +60,6 @@ public class ZombieMovementScript : MonoBehaviour
         z_isWalking=true;
         z_isRunning = false;
         z_state = state.PATROL;
-        Debug.Log("name 2" + GameManagerScript.instance.player.name);
     }
 
     void Update()
@@ -69,7 +69,18 @@ public class ZombieMovementScript : MonoBehaviour
         {
             z_state = state.PURSUE;
         }
-        
+
+        if(z_playerZombieDistance <= 1)
+            {
+            z_state = state.ATTACK;
+            Debug.Log("Player Detected");
+            z_navMeshAgent.speed = 0;
+                /*z_isAttacking = true;
+                z_animator.SetBool("Attack", true);
+                z_isRunning = false;
+                Run(z_isRunning);*/
+            /*Debug.Log("When Detected, attacking is" + z_isAttacking); Debug.Log("When Detected, running is" + z_isRunning);*/
+        }
 
         #region NavMeshMovement
         switch (z_state)
@@ -86,7 +97,11 @@ public class ZombieMovementScript : MonoBehaviour
                 break;
 
             case state.ATTACK:
-                break;
+                if (z_playerZombieDistance < 3)
+                {
+                    z_state = state.PURSUE;
+                }
+                    break;
 
         }
         #endregion
@@ -102,9 +117,9 @@ public class ZombieMovementScript : MonoBehaviour
         z_animator.SetBool("Run", value);
     }
 
-    void Attack(bool value)
+    void Attack()
     {
-        z_animator.SetBool("Attack", value);
+        z_animator.SetTrigger("Attack");
     }
 
     void Death()
@@ -126,10 +141,11 @@ public class ZombieMovementScript : MonoBehaviour
             z_isRunning = false;
             Run(z_isRunning);
             z_isAttacking = false;
-            Attack(z_isAttacking);
+            z_animator.SetBool("Attack", false);
             z_state = state.PATROL;
+            /*Debug.Log("When traversing, attacking is" + z_isAttacking); Debug.Log("When traversing, running is" + z_isRunning); Debug.Log("When traversing, walking is" + z_isWalking);*/
         }
-        if (z_playerZombieDistance < z_radius)
+        if (z_playerZombieDistance <= z_radius)
         {
             z_state = state.PURSUE;
         }
@@ -145,31 +161,11 @@ public class ZombieMovementScript : MonoBehaviour
         z_isRunning = true;
         Run(z_isRunning);
         z_isAttacking = false;
-        Attack(z_isAttacking);
+        z_animator.SetBool("Attack", false);
+        /*Debug.Log("When pursuing, attacking is" + z_isAttacking); Debug.Log("When pursuing, running is" + z_isRunning); Debug.Log("When pursuing, walking is" + z_isWalking);*/
         if (z_playerZombieDistance > z_radius)
         {
             z_state = state.PATROL;
-        }
-    }
-    private void OnCollisionEnter(Collision collision)
-    {
-        if(collision.gameObject.CompareTag("Player"))
-        {
-            Debug.Log("Player Detected");
-            z_isWalking = false;
-            Walk(z_isWalking);
-            z_isRunning = false;
-            Run(z_isRunning);
-            z_isAttacking = true;
-            Attack(z_isAttacking);
-            if (z_playerZombieDistance < z_radius)
-            {
-                z_state = state.PURSUE;
-            }
-            else if (z_playerZombieDistance > z_radius)
-            {
-                z_state = state.PATROL;
-            }
         }
     }
 
@@ -177,5 +173,6 @@ public class ZombieMovementScript : MonoBehaviour
     {
         Gizmos.color= z_gizmosColor;
         Gizmos.DrawWireSphere(this.transform.position, z_radius);
+        Gizmos.DrawRay(this.transform.position, Vector3.forward);
     }
 }

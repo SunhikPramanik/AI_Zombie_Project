@@ -31,7 +31,6 @@ public class GameManagerScript : MonoBehaviour
             Instantiate(zombie_Prefab, z_waypoints[points].transform.position, Quaternion.identity);
         }
 
-        Debug.Log("name 1 "+player.name);
     }
 
     void Update()
